@@ -20,8 +20,6 @@ A modern **web-based C compiler** that allows users to write, compile, and analy
 ---
 
 
----
-
 ## ⚙️ How It Works
 
 1. **Source Code Input**  
