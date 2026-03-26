@@ -69,16 +69,3 @@ A modern **web-based C compiler** that allows users to write, compile, and analy
 - Integrate real-time collaboration  
 
 ---
-
-## 🤝 Contributing
-
-Contributions are welcome!  
-Feel free to fork this repository and submit a pull request.
-
----
-
-## 📜 License
-
-This project is licensed under the MIT License.
-
----
