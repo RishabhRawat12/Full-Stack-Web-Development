@@ -1,71 +1,87 @@
-# 💻 Web-Based C Compiler
+# C-Compiler & Web IDE
 
-A modern **web-based C compiler** that allows users to write, compile, and analyze C programs directly in the browser. This project demonstrates the **front-end phases of a compiler** including lexical analysis, syntax analysis, and semantic analysis.
+A custom C compiler built from scratch with C++, integrated with a full-stack web-based Integrated Development Environment (IDE). This project demonstrates the practical implementation of compiler design principles, including lexical, syntax, and semantic analysis, wrapped in a modern, user-friendly interface.
 
----
+## System Architecture
 
-## 🚀 Features
+The project is divided into three core subsystems:
 
-- 📝 Write and edit C code in a web interface  
-- 🔍 **Lexical Analysis** – Token generation from source code  
-- 🌳 **Syntax Analysis** – Parse tree representation  
-- 🧠 **Semantic Analysis** – Detects logical and type errors  
-- ▶️ Compile and run C programs  
-- 📊 Visual representation of compilation phases:
-  - Source Code
-  - Tokens
-  - Parse Tree
-  - Semantic Output  
+1. **Compiler Backend (C++)**
+   * **Lexical Analyzer:** Tokenizes source code, handling keywords, identifiers, literals, and operators.
+   * **Syntax Analyzer (Parser):** Builds an Abstract Syntax Tree (AST) using Recursive Descent Parsing. Includes dynamic interception of unary operators (`++`, `--`) and inline loop declarations to streamline AST generation.
+   * **Semantic Analyzer:** Manages the Symbol Table, enforces scope resolution, performs type checking, and validates constant expressions for global initializations.
 
----
+2. **API Server (Python / Flask)**
+   * Manages the file system using an SQLite/MySQL database.
+   * Handles user authentication via JWT.
+   * Executes the C++ compiler as a subprocess, feeding it code from the web IDE and returning JSON representations of the tokens, AST, and symbol table.
 
+3. **Frontend IDE (React / Vite)**
+   * Features a tabbed workspace using the Monaco Editor (the core of VS Code).
+   * Visualizes compiler output dynamically, providing dedicated views for the Token Stream, JSON AST, and Symbol Table.
+   * Maps compiler errors directly to line numbers in the editor interface.
 
-## ⚙️ How It Works
+## Tech Stack
 
-1. **Source Code Input**  
-   User writes C code in the editor.
+* **Compiler Engine:** C++17, nlohmann/json
+* **Web Backend:** Python, Flask, SQLAlchemy, PyMySQL
+* **Web Frontend:** React.js, Vite, Monaco Editor, Lucide React
 
-2. **Lexical Analysis**  
-   Code is broken into tokens (keywords, identifiers, operators, etc.)
+## Local Setup & Installation
 
-3. **Syntax Analysis**  
-   Tokens are validated using grammar rules and converted into a parse tree.
+### 1. Build the Compiler
+Navigate to the compiler directory and compile the C++ source code. You must have a standard C++ compiler (like g++ or MinGW) installed.
+```bash
+cd Compiler-Design
+g++ main.cpp src/lexical/lexer.cpp src/syntax/parser.cpp src/semantics/semantic_analyzer.cpp src/AST/ast_printer.cpp -o my_compiler.exe
+```
 
-4. **Semantic Analysis**  
-   Checks for:
-   - Type mismatches  
-   - Undeclared variables  
-   - Logical errors  
+### 2. Start the Backend Server
+Navigate to the server directory, install the Python dependencies, and start the Flask API.
+```bash
+cd Server
+pip install flask flask-cors flask-sqlalchemy pymysql flask-jwt-extended werkzeug
+python main.py
+```
 
-5. **Execution**  
-   Final code is compiled and executed to display output.
+### 3. Start the Frontend Application
+Open a new terminal, navigate to the frontend directory, install the Node modules, and run the Vite development server.
+```bash
+cd Frontend
+npm install
+npm install react-hot-toast react-split @monaco-editor/react lucide-react
+npm run dev
+```
 
----
+## Demonstration Test Cases
 
-## 🖥️ Tech Stack
+To verify the compiler's functionality during evaluation, use the following code snippets in the Web IDE.
 
-- **Frontend:** HTML, CSS, JavaScript, React 
-- **Backend:** javascript (depending on your implementation)  
-- **Compiler Logic:** Custom-built modules (Lexer, Parser, Semantic Analyzer)
+### Test 1: Variable Scoping and Arithmetic
+Evaluates binary expressions and symbol table generation.
+```c
+void main() {
+    int baseValue = 10;
+    int multiplier = 20;
+    int calculation = baseValue * multiplier + 5;
+    string status = "Math operations successful";
+}
+```
 
----
+### Test 2: Abstract Syntax Tree & Parser Hacks
+Evaluates the parser's ability to intercept and rewrite inline variable declarations and increment operators (`++`) into standard binary assignments.
+```c
+int sum = 0;
+int limit = 10;
 
-## 📦 Installation & Setup
+for (int i = 0; i < limit; i++) {
+    sum = sum + i;
+}
+```
 
-### 1. Clone the repository
-
-### 2. Install dependencies
-
-### 3. Run the project
-
-
----
-
-## 🎯 Future Improvements
-
-- Add support for more programming languages  
-- Improve error visualization  
-- Add code optimization phase  
-- Integrate real-time collaboration  
-
----
+### Test 3: Semantic Error Handling (Global Constraints)
+Evaluates the semantic analyzer's adherence to C-standards by proving it successfully catches invalid dynamic expressions in global scope.
+```c
+int x = 5;
+int y = x + 2; // The semantic analyzer will correctly flag this as non-constant
+```
